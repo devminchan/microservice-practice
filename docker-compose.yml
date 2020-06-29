@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  db-user:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=monorepo-user
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_USER=test_user
+      - MYSQL_PASSWORD=1234
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    ports:
+      - 3306:3306
+  user-service:
+    build:
+      context: .
+      dockerfile: ./docker/user/Dockerfile.dev
+    environment:
+      - DB_HOST=db-user
+      - DB_NAME=monorepo-user
+      - DB_USER=test_user
+      - DB_PASSSWORD=1234
+    volumes:
+      - ./:/home/app/
+    expose:
+      - "4000"
+    depends_on:
+      - db-user
+  monorepo-practice:
+    build:
+      context: .
+      dockerfile: ./docker/monorepo-practice/Dockerfile.dev
+    environment:
+      - USER_SERVICE=user-service
+    volumes:
+      - ./:/home/app/
+    ports:
+      - 3000:3000
+    depends_on:
+      - user-service
+
+volumes:
+  mysql_volume:

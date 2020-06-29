@@ -13,6 +13,7 @@ export class AppService {
     this.client = ClientProxyFactory.create({
       transport: Transport.TCP,
       options: {
+        host: process.env.USER_SERVICE || '127.0.0.1',
         port: 4000,
       },
     });
