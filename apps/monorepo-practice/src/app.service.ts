@@ -11,9 +11,16 @@ export class AppService {
 
   constructor() {
     this.client = ClientProxyFactory.create({
-      transport: Transport.REDIS,
+      transport: Transport.RMQ,
       options: {
-        url: `redis://${process.env.REDIS_HOST || 'localhost'}:6379`,
+        urls: [
+          `amqp://rabbitmq:rabbitmq@${process.env.RABBITMQ_HOST ||
+            'localhost'}:5672`,
+        ],
+        queue: 'users_queue',
+        queueOptions: {
+          durable: false,
+        },
       },
     });
   }

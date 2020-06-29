@@ -12,8 +12,17 @@ services:
       - mysql_volume:/var/lib/mysql
     ports:
       - 3306:3306
-  redis:
-    image: redis:5.0-alpine
+  rabbitmq:
+    image: rabbitmq:3.7.5-management
+    hostname: app-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_ERLANG_COOKIE: secret-cookie
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_VHOST: /
   user-service:
     build:
       context: .
@@ -23,24 +32,24 @@ services:
       - DB_NAME=monorepo-user
       - DB_USER=test_user
       - DB_PASSSWORD=1234
-      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
     volumes:
       - ./:/home/app/
     depends_on:
-      - redis
+      - rabbitmq
       - db-user
   monorepo-practice:
     build:
       context: .
       dockerfile: ./docker/monorepo-practice/Dockerfile.dev
     environment:
-      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
     volumes:
       - ./:/home/app/
     ports:
       - 3000:3000
     depends_on:
-      - redis
+      - rabbitmq
       - user-service
 
 volumes:
