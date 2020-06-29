@@ -26,9 +26,8 @@ services:
       - REDIS_HOST=redis
     volumes:
       - ./:/home/app/
-    expose:
-      - "4000"
     depends_on:
+      - redis
       - db-user
   monorepo-practice:
     build:
@@ -41,6 +40,7 @@ services:
     ports:
       - 3000:3000
     depends_on:
+      - redis
       - user-service
 
 volumes:
