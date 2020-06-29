@@ -12,6 +12,8 @@ services:
       - mysql_volume:/var/lib/mysql
     ports:
       - 3306:3306
+  redis:
+    image: redis:5.0-alpine
   user-service:
     build:
       context: .
@@ -21,6 +23,7 @@ services:
       - DB_NAME=monorepo-user
       - DB_USER=test_user
       - DB_PASSSWORD=1234
+      - REDIS_HOST=redis
     volumes:
       - ./:/home/app/
     expose:
@@ -32,7 +35,7 @@ services:
       context: .
       dockerfile: ./docker/monorepo-practice/Dockerfile.dev
     environment:
-      - USER_SERVICE=user-service
+      - REDIS_HOST=redis
     volumes:
       - ./:/home/app/
     ports:
