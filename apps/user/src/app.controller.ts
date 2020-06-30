@@ -10,10 +10,6 @@ export class AppController {
 
   @MessagePattern('getHello')
   getHello(name: string): string {
-    require('dns').lookup(require('os').hostname(), (err, add, fam) => {
-      this.logger.log(`received addr: ${add}`);
-    });
-
     return this.appService.getHello(name);
   }
 }

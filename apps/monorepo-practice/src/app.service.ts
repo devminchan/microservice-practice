@@ -4,6 +4,8 @@ import {
   Transport,
   ClientProxy,
 } from '@nestjs/microservices';
+import { IUser, User } from 'apps/user/src/user/user.entity';
+import { CreateUserRequest } from './dtos/CreateUserRequest';
 
 @Injectable()
 export class AppService {
@@ -27,5 +29,13 @@ export class AppService {
 
   getHello(): Promise<string> {
     return this.client.send<string, string>('getHello', 'Minchan').toPromise();
+  }
+
+  getAllUsers(): Promise<IUser[]> {
+    return this.client.send('getUsers', '').toPromise();
+  }
+
+  createUser(createUserRequest: CreateUserRequest): Promise<User> {
+    return this.client.send('createUser', createUserRequest).toPromise();
   }
 }
